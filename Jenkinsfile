@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         PATH = "C:\\Users\\venne\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
+        KUBECONFIG = 'C:\\ProgramData\\Jenkins\\.kube\\config'
         APP_NAME = 'student-complaint-system'
         K8S_DEPLOYMENT = 'student-complaint-system'
     }
