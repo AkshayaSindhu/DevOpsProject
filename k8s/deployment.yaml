@@ -1,9 +1,10 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: student-complaint-system
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: student-complaint-system
@@ -14,39 +15,7 @@ spec:
     spec:
       containers:
         - name: student-complaint-system
-          image: student-complaint-system:latest
+          image: student-complaint-system:6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 20
-          resources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: student-complaint-system
-spec:
-  type: NodePort
-  selector:
-    app: student-complaint-system
-  ports:
-    - port: 8080
-      targetPort: 8080
-      nodePort: 30080
