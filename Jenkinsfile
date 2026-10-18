@@ -1,17 +1,13 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "C:\\Users\\venne\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
-    }
-
     tools {
         maven 'Maven3'
         jdk 'JDK21'
     }
 
     environment {
-        IMAGE_NAME = 'student-complaint-system'
+        PATH = "C:\\Users\\venne\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
     }
 
     stages {
@@ -20,31 +16,39 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Build and Test') {
             steps {
-                bat 'mvn -B clean test package'
+                bat 'mvn clean test'
             }
         }
+
+        stage('Build Application') {
+            steps {
+                bat 'mvn package -DskipTests'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %IMAGE_NAME%:%BUILD_NUMBER% .'
+                bat 'docker --version'
+                bat 'docker build -t student-complaint-system:%BUILD_NUMBER% .'
             }
         }
-        stage('Deploy to Kubernetes') {
+
+        stage('Verify Docker Image') {
             steps {
-                bat 'kubectl apply -f k8s/'
-                bat 'kubectl set image deployment/student-complaint-system student-complaint-system=%IMAGE_NAME%:%BUILD_NUMBER% --namespace=default'
-                bat 'kubectl rollout status deployment/student-complaint-system --namespace=default --timeout=120s'
+                bat 'docker images student-complaint-system'
             }
         }
     }
 
     post {
         success {
-            echo 'Build, tests, Docker image build, and Kubernetes deployment completed.'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Review the stage logs above.'
+            echo 'Pipeline failed. Check the Console Output for details.'
         }
     }
 }
