@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: student-complaint-system
-          image: student-complaint-system:6
+          image: student-complaint-system:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: 8084
